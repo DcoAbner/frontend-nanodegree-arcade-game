@@ -22,7 +22,8 @@ var Enemy = function(y, speed) {
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.x = -TILE_WIDTH;
-    this.y = y * TILE_HEIGHT + TILE_TOP_GAP;
+    this.row = y;
+    this.y = this.row * TILE_HEIGHT + TILE_TOP_GAP;
     this.speed = speed;
 };
 
@@ -162,3 +163,32 @@ function getRandomInt(min, max) {
 }
 
 
+function checkCollisions() {
+    let playerPosLeft = playerCol * TILE_WIDTH + 15;
+    let playerPosRight = playerPosLeft + 71;
+    for (let enemy of allEnemies) {
+        if (playerRow == enemy.row) {
+
+           enemyPosLeft = enemy.x+10; //add a 10px buffer
+           enemyPosRight = enemyPosLeft + 81;  //add a 10 px buffer
+
+           if (detectCollision(playerPosLeft, playerPosRight, enemyPosLeft, enemyPosRight)) {
+               console.log("hit");
+               setTimeout(player.resetPosition(), 400); //delay before resetting position
+
+           }
+
+        }
+    }
+}
+
+//give the left and right coordinates of player and an object (enemy or other) and will detect collision
+function detectCollision(playerPosLeft, playerPosRight, objectPostLeft, objectPosRight) {
+    if ((objectPostLeft > playerPosLeft && objectPostLeft <playerPosRight) ||
+        (objectPosRight > playerPosLeft && objectPostLeft <playerPosRight) ||
+        (objectPostLeft < playerPosLeft && objectPosRight > playerPosRight)) {
+        return true;
+    } else {
+        return false;
+    }
+}
