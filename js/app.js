@@ -14,13 +14,16 @@ const PLAYER_STARTING_X = PLAYER_STARTING_COL * TILE_WIDTH;
 const PLAYER_STARTING_Y = (PLAYER_STARTING_ROW * TILE_HEIGHT) + TILE_TOP_GAP;
 
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(y, speed) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.x = -TILE_WIDTH;
+    this.y = y * TILE_HEIGHT + TILE_TOP_GAP;
+    this.speed = speed;
 };
 
 // Update the enemy's position, required method for game
@@ -29,6 +32,11 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    this.x  =  this.x + this.speed*dt;
+    if (this.x > TILE_WIDTH * TOTAL_COLS) {
+        this.x = -TILE_WIDTH;
+    }
+
 };
 
 // Draw the enemy on the screen, required method for game
@@ -99,7 +107,12 @@ Player.prototype.resetPosition = function() {
 // Place the player object in a variable called player
 
 var player = new Player();
-var allEnemies = new Array();
+var allEnemies = [new Enemy()];
+
+allEnemies.push(new Enemy(2, 200));
+allEnemies.push(new Enemy(1, 100));
+allEnemies.push(new Enemy(3, 400));
+
 
 
 // This listens for key presses and sends the keys to your
