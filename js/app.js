@@ -1,3 +1,18 @@
+const TILE_WIDTH = 101;
+const TILE_HEIGHT = 83;
+const TILE_TOP_GAP = -20;
+
+const PLAYER_STARTING_COL = 2;
+const PLAYER_STARTING_ROW = 5;
+const TOTAL_COLS = 5;
+const TOTAL_ROWS = 6;
+
+var playerRow = PLAYER_STARTING_ROW;
+var playerCol = PLAYER_STARTING_COL;
+
+const PLAYER_STARTING_X = PLAYER_STARTING_COL * TILE_WIDTH;
+const PLAYER_STARTING_Y = (PLAYER_STARTING_ROW * TILE_HEIGHT) + TILE_TOP_GAP;
+
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -24,17 +39,73 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+var Player = function() {
+    this.sprite = 'images/char-boy.png';
+    this.x = PLAYER_STARTING_X;
+    this.y = PLAYER_STARTING_Y;
 
+}
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.update = function(dt) {
+
+}
+
+//player hops from one square to another with each keypress; movement is restricted by the size of the grid
+Player.prototype.handleInput = function(key) {
+    if (key === 'left') {
+        if (playerCol > 0) {
+            playerCol -= 1;
+            this.x -= TILE_WIDTH;
+        }
+    }
+    if (key === 'right') {
+        if (playerCol < (TOTAL_COLS - 1)) {
+            playerCol += 1;
+            this.x += TILE_WIDTH;
+        }
+    }
+    if (key === 'down') {
+        if (playerRow < TOTAL_ROWS - 1) {
+            playerRow += 1;
+            this.y += TILE_HEIGHT;
+        }
+    }
+    if (key === 'up') {
+        if (playerRow > 1) {  //top row is water
+            playerRow -= 1;
+            this.y -= TILE_HEIGHT;
+        } else if (playerRow === 1) {
+            console.log("you win");
+            this.resetPosition();
+        }
+    }
+    console.log(`current location: ${playerCol}, ${playerRow}`);
+}
+
+Player.prototype.resetPosition = function() {
+    this.x = PLAYER_STARTING_X;
+    this.y = PLAYER_STARTING_Y;
+    playerRow = PLAYER_STARTING_ROW;
+    playerCol = PLAYER_STARTING_COL;
+
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+var player = new Player();
+var allEnemies = new Array();
 
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
+
     var allowedKeys = {
         37: 'left',
         38: 'up',
@@ -44,3 +115,12 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+
+//prevent devault movement of window for arrow keys
+document.addEventListener('keydown', function(e) {
+
+    if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40) {
+        e.preventDefault();
+    }
+})
