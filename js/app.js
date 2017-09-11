@@ -107,12 +107,19 @@ Player.prototype.resetPosition = function() {
 
 }
 
+var Gem = function() {
+    this.sprite = "images/Heart.png";
+    this.x = 202;
+    this.y = 300;
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
 var player = new Player();
 var allEnemies = [new Enemy()];
+var gem = new Gem();
 
 generateEnemies();
 
@@ -205,4 +212,10 @@ function updateScore(score) {
     ctx.textBaseline = "top";
     ctx.font = "30px Arial";
     ctx.fillText(`Score: ${score}`, 10, 10);
+}
+
+Gem.prototype.render = function() {
+
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+
 }
