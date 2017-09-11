@@ -7,14 +7,17 @@ const PLAYER_STARTING_ROW = 5;
 const TOTAL_COLS = 5;
 const TOTAL_ROWS = 6;
 
-var playerRow = PLAYER_STARTING_ROW;
-var playerCol = PLAYER_STARTING_COL;
+let playerRow = PLAYER_STARTING_ROW;
+let playerCol = PLAYER_STARTING_COL;
+let playerScore = 0;
+
+const POINTS_FOR_WINNING = 1000;
 
 const PLAYER_STARTING_X = PLAYER_STARTING_COL * TILE_WIDTH;
 const PLAYER_STARTING_Y = (PLAYER_STARTING_ROW * TILE_HEIGHT) + TILE_TOP_GAP;
 
 // Enemies our player must avoid
-var Enemy = function(y, speed) {
+let Enemy = function(y, speed) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
@@ -89,6 +92,7 @@ Player.prototype.handleInput = function(key) {
             this.y -= TILE_HEIGHT;
         } else if (playerRow === 1) {
             console.log("you win");
+            playerScore += POINTS_FOR_WINNING;
             this.resetPosition();
         }
     }
@@ -187,8 +191,18 @@ function detectCollision(playerPosLeft, playerPosRight, objectPostLeft, objectPo
     if ((objectPostLeft > playerPosLeft && objectPostLeft <playerPosRight) ||
         (objectPosRight > playerPosLeft && objectPostLeft <playerPosRight) ||
         (objectPostLeft < playerPosLeft && objectPosRight > playerPosRight)) {
+        playerScore = 0;
         return true;
     } else {
         return false;
     }
+}
+
+function updateScore(score) {
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, 505, 60);
+    ctx.fillStyle = "red";
+    ctx.textBaseline = "top";
+    ctx.font = "30px Arial";
+    ctx.fillText(`Score: ${score}`, 10, 10);
 }
