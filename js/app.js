@@ -7,17 +7,23 @@ const TOTAL_ROWS = 6;
 
 const POINTS_FOR_WINNING = 1000;
 
-const PLAYER_STARTING_X = PLAYER_STARTING_COL * TILE_WIDTH;
-const PLAYER_STARTING_Y = (PLAYER_STARTING_ROW * TILE_HEIGHT) + TILE_TOP_GAP;
+//OOP approach with GamePiece as the SuperClass for each object; contains starting x, y, sprite location,
+// and render function
 
+let GamePiece = function(x, y, sprite) {
+    this.x = x;
+    this.y = y;
+    this.sprite = sprite;
+}
 
-let player = new Player();
-let allEnemies = [new Enemy()];
-let gems = [new Gem()];
+GamePiece.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
 
+//called from engine.js to instantiate all pieces
+function instantiateGamePieces() {
 
-generateEnemies();
-generateGems();
+}
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -111,4 +117,9 @@ function updateScore(score) {
 function gemCollected(gem, index) {
     playerScore += (gem.type+1)*500;
     gems.splice(index, 1);
+}
+
+//helperfunction that converts a grid row to Y coordinate
+function convertRowToY(row) {
+    return row * TILE_HEIGHT + TILE_TOP_GAP;
 }

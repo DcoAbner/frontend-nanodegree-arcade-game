@@ -2,19 +2,16 @@
  * Created by thenry on 9/11/17.
  */
 
-// Enemies our player must avoid
+//create Enemy as subclass of GamePiece
+//x will always be 1 tile width to left of screen; Y is row (converted in call to the pixel)
 let Enemy = function(y, speed) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    this.x = -TILE_WIDTH;
-    this.row = y;
-    this.y = this.row * TILE_HEIGHT + TILE_TOP_GAP;
+    GamePiece.call(this, -TILE_WIDTH, convertRowToY(y), 'images/enemy-bug.png');
     this.speed = speed;
-};
+    this.row = y;
+}
+
+Enemy.prototype = Object.create(GamePiece.prototype);
+Enemy.prototype.constructor = GamePiece;
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -29,11 +26,6 @@ Enemy.prototype.update = function(dt, index) {
 
 };
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
 //generates the enemies at random intervals; to stop, just add if statement around the setTimeout function
 function generateEnemies() {
 
@@ -45,7 +37,6 @@ function generateEnemies() {
             loop();
         }, rand);
     }());
-
 }
 
 function generateNewEnemy() {
@@ -55,3 +46,5 @@ function generateNewEnemy() {
     let speed = getRandomInt(100,400);
     allEnemies.push(new Enemy(y, speed));
 }
+
+let allEnemies = [new Enemy()];

@@ -5,6 +5,10 @@
 const PLAYER_STARTING_COL = 2;
 const PLAYER_STARTING_ROW = 5;
 
+const PLAYER_STARTING_X = PLAYER_STARTING_COL * TILE_WIDTH;
+const PLAYER_STARTING_Y = (PLAYER_STARTING_ROW * TILE_HEIGHT) + TILE_TOP_GAP;
+
+
 let playerRow = PLAYER_STARTING_ROW;
 let playerCol = PLAYER_STARTING_COL;
 
@@ -14,16 +18,13 @@ if (!localStorage.FROGGER_HIGH_SCORE) {
 
 let playerScore = 0;
 
+//create player as subclass of GamePiece
+
 var Player = function() {
-    this.sprite = 'images/char-boy.png';
-    this.x = PLAYER_STARTING_X;
-    this.y = PLAYER_STARTING_Y;
-
+    GamePiece.call(this, PLAYER_STARTING_X, PLAYER_STARTING_Y, 'images/char-boy.png');
 }
-
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+Player.prototype = Object.create(GamePiece.prototype);
+Player.prototype.constructor = GamePiece;
 
 Player.prototype.update = function(dt) {
 
@@ -67,3 +68,5 @@ Player.prototype.resetPosition = function() {
     playerRow = PLAYER_STARTING_ROW;
     playerCol = PLAYER_STARTING_COL;
 }
+
+let player = new Player();

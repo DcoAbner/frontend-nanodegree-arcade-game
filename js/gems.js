@@ -6,23 +6,22 @@
 const GEM_TYPES = ["Heart.png", "Key.png", "Star.png", "Gem Blue.png", "Gem Orange.png", "Gem Green.png"];
 const MAX_GEMS = 5; //max number of gems on screen at one time
 
-var Gem = function(col, row, type) {
-    //default if type not yet provided
+//create Gem as subclass of GamePiece
+let Gem = function(x, y, type) {
+    let string = "images/";
     if (!type) {
-        this.sprite = "images/Heart.png"
+        string += "Heart.png";
     } else {
-        this.sprite = 'images/'+GEM_TYPES[type];
+        string += GEM_TYPES[type];
     }
+    GamePiece.call(this, x*TILE_WIDTH, convertRowToY(y), string);
+    this.col = x;
+    this.row = y;
     this.type = type;
-    this.col = col;
-    this.row = row;
-    this.x = this.col * TILE_WIDTH;
-    this.y = this.row * TILE_HEIGHT + TILE_TOP_GAP;
 }
 
-Gem.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+Gem.prototype = Object.create(GamePiece.prototype);
+Gem.prototype.constructor = GamePiece;
 
 //generates a new gem every 5-10 seconds; random grid coordinates and random type;\
 //if there are too many gems, won't push it onto the array
@@ -41,3 +40,5 @@ function generateGems() {
         }, rand);
     }());
 }
+
+let gems = [new Gem()];
