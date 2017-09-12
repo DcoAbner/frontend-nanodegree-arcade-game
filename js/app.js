@@ -15,6 +15,7 @@ let player = new Player();
 let allEnemies = [new Enemy()];
 let gems = [new Gem()];
 
+
 generateEnemies();
 generateGems();
 
@@ -65,7 +66,7 @@ function checkCollisions() {
 
     //checks to see if row/column match and collects gem
     gems.forEach(function(gem, index) {
-        if (playerRow === gem.row && playerCol === gem.col) {
+        if (playerRow === gem.row && playerCol === gem.col && gem.type != 6) {
             gemCollected(gem, index);
         }
     })
@@ -99,6 +100,9 @@ function updateScore(score) {
     ctx.fillText(`Score: ${score}`, 10, 10);
 
     //high score
+    if (playerScore > localStorage.FROGGER_HIGH_SCORE) {
+        localStorage.FROGGER_HIGH_SCORE = playerScore;
+    }
     ctx.textAlign = "right";
     ctx.fillText(`HIGH SCORE: ${localStorage.FROGGER_HIGH_SCORE}`, 495, 10);
 }
@@ -108,5 +112,3 @@ function gemCollected(gem, index) {
     playerScore += (gem.type+1)*500;
     gems.splice(index, 1);
 }
-
-

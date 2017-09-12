@@ -7,6 +7,11 @@ const PLAYER_STARTING_ROW = 5;
 
 let playerRow = PLAYER_STARTING_ROW;
 let playerCol = PLAYER_STARTING_COL;
+
+if (!localStorage.FROGGER_HIGH_SCORE) {
+    localStorage.setItem('FROGGER_HIGH_SCORE', 0);
+}
+
 let playerScore = 0;
 
 var Player = function() {

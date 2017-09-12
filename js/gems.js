@@ -3,7 +3,7 @@
  */
 
 //array holds the file names for different types of objects, generated at random
-const GEM_TYPES = ["Heart.png", "Key.png", "Star.png", "Gem Blue.png", "Gem Orange.png", "Gem Green.png"];
+const GEM_TYPES = ["Heart.png", "Key.png", "Star.png", "Gem Blue.png", "Gem Orange.png", "Gem Green.png", "Selector.png"];
 const MAX_GEMS = 5; //max number of gems on screen at one time
 
 var Gem = function(col, row, type) {
@@ -27,6 +27,7 @@ Gem.prototype.render = function() {
 //generates a new gem every 5-10 seconds; random grid coordinates and random type;\
 //if there are too many gems, won't push it onto the array
 function generateGems() {
+
     (function loop() {
         var rand = getRandomInt(5000, 10000);
         setTimeout(function() {
