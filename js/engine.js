@@ -152,11 +152,11 @@ var Engine = (function(global) {
             enemy.render();
         });
 
-        player.render();
-
         gems.forEach(function(gem) {
             gem.render();
         });
+
+        player.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -182,8 +182,7 @@ var Engine = (function(global) {
         'images/Star.png',
         'images/Gem Blue.png',
         'images/Gem Green.png',
-        'images/Gem Orange.png',
-        'images/Selector.png'
+        'images/Gem Orange.png'
     ]);
     Resources.onReady(init);
 
