@@ -6,6 +6,8 @@ const PLAYER_STARTING_COL = 2;
 const PLAYER_STARTING_ROW = 5;
 const TOTAL_COLS = 5;
 const TOTAL_ROWS = 6;
+const GEM_TYPES = ["Heart.png", "Key.png", "Star.png", "Gem Blue.png", "Gem Orange.png", "Gem Green.png"];
+const MAX_GEMS = 5; //max number on screen at one time
 
 let playerRow = PLAYER_STARTING_ROW;
 let playerCol = PLAYER_STARTING_COL;
@@ -91,12 +93,10 @@ Player.prototype.handleInput = function(key) {
             playerRow -= 1;
             this.y -= TILE_HEIGHT;
         } else if (playerRow === 1) {
-            console.log("you win");
             playerScore += POINTS_FOR_WINNING;
             this.resetPosition();
         }
     }
-    console.log(`current location: ${playerCol}, ${playerRow}`);
 }
 
 Player.prototype.resetPosition = function() {
@@ -107,10 +107,22 @@ Player.prototype.resetPosition = function() {
 
 }
 
-var Gem = function() {
-    this.sprite = "images/Heart.png";
-    this.x = 202;
-    this.y = 300;
+var Gem = function(col, row, type) {
+    // this.sprite = "images/Heart.png"; //this line works
+    if (!type) {
+        this.sprite = "images/Heart.png"
+    } else {
+        this.sprite = 'images/'+GEM_TYPES[type];
+    }
+    this.type = type;
+    this.col = col;
+    this.row = row;
+    this.x = this.col * TILE_WIDTH;
+    this.y = this.row * TILE_HEIGHT + TILE_TOP_GAP;
+}
+
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
 // Now instantiate your objects.
@@ -119,9 +131,10 @@ var Gem = function() {
 
 var player = new Player();
 var allEnemies = [new Enemy()];
-var gem = new Gem();
+var gems = [new Gem()];
 
 generateEnemies();
+generateGems();
 
 
 // This listens for key presses and sends the keys to your
@@ -169,6 +182,23 @@ function generateNewEnemy() {
     allEnemies.push(new Enemy(y, speed));
 }
 
+function generateGems() {
+    (function loop() {
+        var rand = Math.round(Math.random() * (10000 - 5000)) + 5000;
+        setTimeout(function() {
+            let randomX = Math.round(Math.random() * (4-0)) + 0;
+            let randomY = Math.round(Math.random() * (4 - 1)) + 1;
+            let gemType = Math.round(Math.random() * (5-0)) + 0;
+            if (gems.length <= MAX_GEMS) {
+                gems.push(new Gem(randomX, randomY, gemType));
+            }
+            loop();
+        }, rand);
+    }());
+}
+
+
+
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -180,17 +210,24 @@ function checkCollisions() {
     for (let enemy of allEnemies) {
         if (playerRow == enemy.row) {
 
-           enemyPosLeft = enemy.x+10; //add a 10px buffer
-           enemyPosRight = enemyPosLeft + 81;  //add a 10 px buffer
+           enemyPosLeft = enemy.x+20; //add a 20px buffer
+           enemyPosRight = enemyPosLeft + 71;  //add a 20 px buffer
 
            if (detectCollision(playerPosLeft, playerPosRight, enemyPosLeft, enemyPosRight)) {
-               console.log("hit");
+
                setTimeout(player.resetPosition(), 400); //delay before resetting position
 
            }
 
         }
     }
+
+    gems.forEach(function(gem, index) {
+
+        if (playerRow === gem.row && playerCol === gem.col) {
+            gemCollected(gem, index);
+        }
+    })
 }
 
 //give the left and right coordinates of player and an object (enemy or other) and will detect collision
@@ -198,6 +235,9 @@ function detectCollision(playerPosLeft, playerPosRight, objectPostLeft, objectPo
     if ((objectPostLeft > playerPosLeft && objectPostLeft <playerPosRight) ||
         (objectPosRight > playerPosLeft && objectPostLeft <playerPosRight) ||
         (objectPostLeft < playerPosLeft && objectPosRight > playerPosRight)) {
+        if (playerScore > localStorage.FROGGER_HIGH_SCORE) {
+            localStorage.FROGGER_HIGH_SCORE = playerScore;
+        }
         playerScore = 0;
         return true;
     } else {
@@ -208,14 +248,25 @@ function detectCollision(playerPosLeft, playerPosRight, objectPostLeft, objectPo
 function updateScore(score) {
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, 505, 60);
+
+    //current score
     ctx.fillStyle = "red";
     ctx.textBaseline = "top";
-    ctx.font = "30px Arial";
+    ctx.textAlign = "left";
+    ctx.font = "24px Arial";
     ctx.fillText(`Score: ${score}`, 10, 10);
+
+    //high score
+    ctx.textAlign = "right";
+    ctx.fillText(`HIGH SCORE: ${localStorage.FROGGER_HIGH_SCORE}`, 495, 10);
+
+
 }
 
-Gem.prototype.render = function() {
+function gemCollected(gem, index) {
 
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-
+    playerScore += (gem.type+1)*500;
+    gems.splice(index, 1);
 }
+
+
